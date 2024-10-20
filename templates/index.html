@@ -1,0 +1,168 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Your Momodoro
+{% endblock %}
+
+{% block main %}
+    <div>
+        <a href="/logout" class="logout-link">Log Out</a>
+    </div>
+    <div class="home-container">
+        <div class="task-container">
+            <div class="task-header">
+                <p class="username">{{ user.username.upper() }}'S TASKS</p>
+            </div>
+            <div class="task-list-container">
+            <ul class="todo-list">
+                {% for todo in todos_new %}
+                <li class="todo-item">
+                    {{todo.task}}
+                    <form method="POST" action="/" style="display: inline;">
+                        <input type="hidden" name="task_id" value="{{ todo.id }}">
+                        <button class="delete-btn" type="submit" class="delete-btn">Done</button>
+                    </form>
+                    {% else %}
+                    <p>No Tasks</p>
+                    {% endfor %}
+                </li>
+                <form class="task-form" method="POST" action="/">
+                    <input class = "task-input" type="text" name="task" placeholder="New Task" autocomplete="off"/>
+                    <button class="task-add-btn" type="submit">Add</button>
+                </form>
+                </ul>
+            </div>
+            <div>
+            </div>
+        </div>
+
+        <div class="b-container">
+            <div class="timer-container">
+                <h1 class="timer">
+                    <span class="time-part" id="hours">00</span>:<span class="time-part" id="minutes">00</span>:<span class="time-part" id="seconds">00</span>
+                </h1>
+                <input type="number" id="input-time" class="hidden" min="0" />
+                <div class="buttons-container">
+                    <img src="./static/assets/start.svg" class="start-pause" />
+                    <img class="stop" src="./static/assets/stop.svg" />
+                </div>
+            </div>
+            <img class="momo-timer" src="./static/assets/momo_timer.svg" onClick="momoBlink()"/>
+        </div>
+    </div>
+
+    <script>
+        let timerInterval;
+        let totalSeconds = 0;
+
+        const startPause = document.querySelector(".start-pause");
+        const stopButton = document.querySelector(".stop");
+        const timerDisplay = document.querySelector(".timer");
+        const hoursPart = document.getElementById("hours");
+        const minutesPart = document.getElementById("minutes");
+        const secondsPart = document.getElementById("seconds");
+        const inputTime = document.getElementById("input-time");
+
+        function updateTimerDisplay() {
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = totalSeconds % 60;
+
+            hoursPart.innerHTML = `${h < 10 ? '0' + h : h}`;
+            minutesPart.innerHTML = `${m < 10 ? '0' + m : m}`;
+            secondsPart.innerHTML = `${s < 10 ? '0' + s : s}`;
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (totalSeconds > 0) {
+                    totalSeconds--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    alert("Break Time :3");
+                    startPause.src = "./static/assets/start.svg";
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function resetTimer() {
+            stopTimer();
+            totalSeconds = 0;
+            updateTimerDisplay();
+        }
+
+        function setTimePart(part) {
+           //shows input field
+            inputTime.value = ''; //clears previous value
+            inputTime.classList.remove("hidden");
+            inputTime.style.display = "inline-block"; //makes it visible
+            inputTime.focus();
+
+            inputTime.onblur = () => {
+                //hides input when focus lost
+                inputTime.style.display = "none";
+            };
+
+            inputTime.onchange = () => {
+                const newValue = parseInt(inputTime.value);
+                if (!isNaN(newValue) && newValue >= 0) {
+                    if (part === 'hours') {
+                        totalSeconds = (newValue * 3600) + (totalSeconds % 3600);
+                    } else if (part === 'minutes') {
+                        totalSeconds = (totalSeconds - (totalSeconds % 3600)) + (newValue * 60) + (totalSeconds % 60);
+                    } else if (part === 'seconds') {
+                        totalSeconds = totalSeconds - (totalSeconds % 60) + newValue;
+                    }
+                    updateTimerDisplay();
+                }
+                inputTime.style.display = "none"; //hide input after setting value
+            };
+        }
+
+        //event listeners for clicking
+        hoursPart.addEventListener("click", () => setTimePart('hours'));
+        minutesPart.addEventListener("click", () => setTimePart('minutes'));
+        secondsPart.addEventListener("click", () => setTimePart('seconds'));
+
+        startPause.addEventListener("click", () => {
+            const currentSrc = startPause.src.split("/").pop();
+
+            if (currentSrc === "start.svg") {
+                if (totalSeconds > 0) {
+                    startTimer();
+                    startPause.src = "./static/assets/pause.svg";
+                } else {
+                    alert("Please set a valid time");
+                }
+            } else if (currentSrc === "pause.svg") {
+                stopTimer();
+                startPause.src = "./static/assets/start.svg";
+            }
+        });
+
+        stopButton.addEventListener("click", () => {
+            resetTimer();
+            startPause.src = "./static/assets/start.svg";
+        });
+
+        updateTimerDisplay(); //initializes timer to 0
+
+        function momoBlink() {
+            const momo = document.querySelector(".momo-timer");
+            const originalMomo = "./static/assets/momo_timer.svg";
+            const blinkMomo = "./static/assets/momo_timer_blink.svg";
+
+            momo.src = blinkMomo;
+
+            setTimeout(()=> {
+                momo.src = originalMomo;
+            }, 500);
+        }
+    </script>
+
+{% endblock %}

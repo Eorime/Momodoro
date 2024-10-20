@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+
+    <div class="form-div">
+        <img src="./static/assets/momo.svg" class="momo" onClick="toggleImage()"/>
+        <form class="form" action="/login" method="POST">
+            <input class="input" name="username" type="text" placeholder="Username" autocomplete="off" >
+            <input class="input"name="password" type="password" placeholder="Password" autocomplete="off">
+            <button class="submit" name="login" type="submit" value="submit">Log In</button>
+        </form>
+    </div>
+
+    <div class="redirect">
+        <p>Don't have an account?</p>
+        <a class="redirect-a" href="/register">
+            Register!
+        </a>
+    </div>
+
+    <script>
+        function toggleImage() {
+            const image = document.querySelector(".momo");
+            const originalSrc = "./static/assets/momo.svg";
+            const newSrc = "./static/assets/momo_blink.svg";
+
+            image.src = newSrc;
+
+            setTimeout(() => {
+                image.src = originalSrc;
+            }, 500);
+        }
+    </script>
+
+{% endblock %}

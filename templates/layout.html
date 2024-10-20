@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            Momodoro
+        </title>
+        <link href="/static/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <header>
+            <a class= "logo-a" href="/">
+                <img class="logo" src="./static/assets/logo.svg"/>
+            </a>
+            <p class="logo-text">MOMODORO</p>
+        </header>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        {% block main %}
+        {% endblock %}
+
+    </body>
+</html>

@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+
+    <div class ="form-div">
+        <form class="form" action="/register" method="POST">
+            <input class="input" name="username" type="text" placeholder="Username" autocomplete="off">
+            <input class="input" name="password" type="password" placeholder="Password" autocomplete="off">
+            <button class="submit" name="submit" type="submit" value="submit">Register</button>
+        </form>
+    </div>
+
+    <img class="momo-back" src="./static/assets/momo_back.svg"/>
+
+{% endblock %}
